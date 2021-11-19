@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css"
+      rel="stylesheet"
+    />
+    <title>Movies</title>
+  </head>
+  <body>
+    <h1>
+      Movies
+    </h1>
+
+    <div id="wrapper"></div>
+
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+    <script>
+      var j = []
+      var columns = []
+
+      fetch('./diary.csv')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('HTTP error ' + response.status)
+          }
+          return response.text()
+        })
+        .then(text => {
+          text = text.split('\n')
+          text.shift()
+          text.pop()
+          test = text.reverse()
+          // todo \r
+          console.log('text', text)
+          columns = text.pop()
+
+          for (var i = 0; i < text.length; i++) {
+            console.log(text[i])
+            var line = text[i].split(',')
+            j.push(line)
+          }
+
+          main()
+        })
+        .catch(function () {
+          this.dataError = true
+        })
+
+      function main () {
+        new gridjs.Grid({
+          columns: [
+            {
+              name: 'Date'
+            },
+            {
+              name: 'Name'
+            },
+            {
+              name: 'Year'
+            },
+            {
+              name: 'Link',
+              formatter: cell =>
+                gridjs.html(`<a href="${cell}" target="_blank">${cell}</a>`)
+            },
+            {
+              name: 'Rating'
+            }
+          ],
+          search: true,
+          data: j
+        }).render(document.getElementById('wrapper'))
+      }
+
+      // setTimeout(main, 1000)
+    </script>
+  </body>
+</html>
